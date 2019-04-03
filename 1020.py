@@ -1,29 +1,38 @@
 from typing import List
 
 class Solution:
-    def canThreePartsEqualSum(self, A: List[int]) -> bool:
-        s, n = sum(A), len(A)
-        if s % 3 != 0:
-            return False
-        s //= 3
-
-        p, sump, q, sumq = -1, 0, -1, 0
-        for i in range(n):
-            sump += A[i]
-            if sump == s:
-                p = i
-                break
-
-        for i in range(n):
-            sumq += A[n - 1 - i]
-            if sumq == s:
-                q = n - 1 - i
-                break
-
-        return -1 < p < q
+    DIRECTIONS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    
+    def numEnclaves(self, A: List[List[int]]) -> int:
+        def bfs(A, used, x, y, m, n):
+            used[x][y] = True
+            position = [(x, y)]
+            head, tail, escape = 0, 0, False
+            
+            while head <= tail:
+                curx, cury = position[head]
+                head += 1
+                for direct in self.DIRECTIONS:
+                    nextx, nexty = curx + direct[0], cury + direct[1]
+                    if nextx < 0 or nextx >= m or nexty < 0 or nexty >= n:
+                        escape = True
+                    elif A[nextx][nexty] == 1 and used[nextx][nexty] == False:
+                        used[nextx][nexty] = True
+                        position.append((nextx, nexty))
+                        tail += 1
+            return 0 if escape else len(position)
+        
+        m, n = len(A), len(A[0])
+        used = [[False] * n for _ in range(m)]
+        ans = 0
+        for i in range(m):
+            for j in range(n):
+                if A[i][j] == 1:
+                    if not used[i][j]:
+                        ans += bfs(A, used, i, j, m, n)
+        return ans
 
 
 solution = Solution()
-print(solution.canThreePartsEqualSum([0,2,1,-6,6,-7,9,1,2,0,1]))
-print(solution.canThreePartsEqualSum([0,2,1,-6,6,7,9,-1,2,0,1]))
-print(solution.canThreePartsEqualSum([3,3,6,5,-2,2,5,1,-9,4]))
+print(solution.numEnclaves([[0,0,0,0],[1,0,1,0],[0,1,1,0],[0,0,0,0]]))
+print(solution.numEnclaves([[0,1,1,0],[0,0,1,0],[0,0,1,0],[0,0,0,0]]))

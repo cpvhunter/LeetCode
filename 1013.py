@@ -1,17 +1,29 @@
 from typing import List
 
 class Solution:
-    def numPairsDivisibleBy60(self, time: List[int]) -> int:
-        a = [0] * 60
-        for t in time:
-            a[t % 60] += 1
-        
-        ans = a[0] * (a[0] - 1) // 2 + a[30] * (a[30] - 1) // 2
-        for i in range(1, 30):
-            ans += a[i] * a[60 - i]
-        
-        return ans
+    def canThreePartsEqualSum(self, A: List[int]) -> bool:
+        s, n = sum(A), len(A)
+        if s % 3 != 0:
+            return False
+        s //= 3
+
+        p, sump, q, sumq = -1, 0, -1, 0
+        for i in range(n):
+            sump += A[i]
+            if sump == s:
+                p = i
+                break
+
+        for i in range(n):
+            sumq += A[n - 1 - i]
+            if sumq == s:
+                q = n - 1 - i
+                break
+
+        return -1 < p < q
 
 
 solution = Solution()
-print(solution.numPairsDivisibleBy60([30,20,150,100,40]))
+print(solution.canThreePartsEqualSum([0,2,1,-6,6,-7,9,1,2,0,1]))
+print(solution.canThreePartsEqualSum([0,2,1,-6,6,7,9,-1,2,0,1]))
+print(solution.canThreePartsEqualSum([3,3,6,5,-2,2,5,1,-9,4]))
